@@ -1,7 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Location } from '@angular/common';
-import { DomSanitizer } from '@angular/platform-browser';
 import { Subscription } from 'rxjs/Subscription';
 import { switchMap, tap } from 'rxjs/operators';
 
@@ -22,8 +21,7 @@ export class UserComponent implements OnInit, OnDestroy {
     constructor(
         private _hackerNewsAPIService: HackerNewsAPIService,
         private route: ActivatedRoute,
-        private _location: Location,
-        private domSanitizer: DomSanitizer
+        private _location: Location
     ) {}
 
     ngOnInit() {
@@ -33,11 +31,7 @@ export class UserComponent implements OnInit, OnDestroy {
                 switchMap(() => this._hackerNewsAPIService.fetchUser(this.userId))
             )
             .subscribe(
-                (data) =>
-                    (this.user = {
-                        ...data,
-                        about: this.domSanitizer.bypassSecurityTrustHtml(data.about as string),
-                    }),
+                (data) => (this.user = data),
                 () => (this.errorMessage = 'Could not load user ' + this.userId + '.')
             );
     }
